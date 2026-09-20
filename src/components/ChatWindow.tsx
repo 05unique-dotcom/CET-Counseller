@@ -94,7 +94,7 @@ export function ChatWindow({ threadId }: { threadId: string }) {
             <div className="space-y-6">
               {messages.map((message) => (
                 <Message key={message.id} from={message.role} className="gap-1">
-                  <MessageContent variant={message.role === "user" ? "contained" : "flat"}>
+                  <MessageContent>
                     {message.parts.map((part, i) =>
                       part.type === "text" ? (
                         <MessageResponse key={i}>{part.text}</MessageResponse>
