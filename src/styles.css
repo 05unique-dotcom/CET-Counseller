@@ -61,8 +61,6 @@
   --color-sidebar-ring: var(--sidebar-ring);
   --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
-  --color-ink: var(--ink);
-  --color-ink-foreground: var(--ink-foreground);
 }
 
 :root {
