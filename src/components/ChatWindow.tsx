@@ -67,8 +67,11 @@ export function ChatWindow({
   useEffect(() => {
     const question = initialQuestion?.trim();
     if (!question || sentInitial.current || messages.length > 0) return;
-    sentInitial.current = true;
-    void sendMessage({ text: question });
+    const timer = window.setTimeout(() => {
+      sentInitial.current = true;
+      void sendMessage({ text: question });
+    }, 60);
+    return () => window.clearTimeout(timer);
   }, [initialQuestion, messages.length, sendMessage]);
 
   const send = (text: string) => {
