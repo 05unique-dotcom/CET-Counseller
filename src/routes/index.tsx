@@ -43,7 +43,7 @@ function Home() {
     navigate({
       to: "/chat/$threadId",
       params: { threadId: thread.id },
-      search: text ? { q: text } : undefined,
+      search: text ? { q: text } : {},
     });
   };
 
