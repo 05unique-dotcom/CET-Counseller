@@ -25,7 +25,13 @@ const starters = [
   "How is JEE Main used for Maharashtra CAP admissions?",
 ];
 
-export function ChatWindow({ threadId }: { threadId: string }) {
+export function ChatWindow({
+  threadId,
+  initialQuestion,
+}: {
+  threadId: string;
+  initialQuestion?: string | undefined;
+}) {
   const initialMessages = useMemo<UIMessage[]>(
     () => getThread(threadId)?.messages ?? [],
     [threadId],
@@ -56,6 +62,17 @@ export function ChatWindow({ threadId }: { threadId: string }) {
   useEffect(() => {
     if (!isLoading) textareaRef.current?.focus();
   }, [isLoading, threadId]);
+
+  const sentInitial = useRef(false);
+  useEffect(() => {
+    const question = initialQuestion?.trim();
+    if (!question || sentInitial.current || messages.length > 0) return;
+    const timer = window.setTimeout(() => {
+      sentInitial.current = true;
+      void sendMessage({ text: question });
+    }, 60);
+    return () => window.clearTimeout(timer);
+  }, [initialQuestion, messages.length, sendMessage]);
 
   const send = (text: string) => {
     const value = text.trim();

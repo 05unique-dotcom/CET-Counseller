@@ -7,6 +7,8 @@ import { Menu } from "lucide-react";
 import { useState } from "react";
 
 export const Route = createFileRoute("/chat/$threadId")({
+  validateSearch: (search: Record<string, unknown>): { q?: string } =>
+    typeof search["q"] === "string" && search["q"] ? { q: search["q"] } : {},
   head: () => ({
     meta: [
       { title: "Chat with CET Counsellor | MHT-CET & JEE admissions" },
@@ -29,6 +31,7 @@ export const Route = createFileRoute("/chat/$threadId")({
 
 function ChatPage() {
   const { threadId } = Route.useParams();
+  const { q } = Route.useSearch();
   const [open, setOpen] = useState(false);
 
   return (
@@ -54,7 +57,7 @@ function ChatPage() {
         </header>
 
         <div className="min-h-0 flex-1">
-          <ChatWindow key={threadId} threadId={threadId} />
+          <ChatWindow key={threadId} threadId={threadId} initialQuestion={q} />
         </div>
       </div>
     </div>
