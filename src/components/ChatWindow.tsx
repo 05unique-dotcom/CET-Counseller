@@ -66,6 +66,7 @@ export function ChatWindow({
   const sentInitial = useRef(false);
   useEffect(() => {
     const question = initialQuestion?.trim();
+    console.log("INIT_Q", JSON.stringify(question), messages.length, sentInitial.current);
     if (!question || sentInitial.current || messages.length > 0) return;
     sentInitial.current = true;
     void sendMessage({ text: question });
