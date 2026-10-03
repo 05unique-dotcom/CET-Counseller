@@ -1,7 +1,7 @@
 diff --git a/package.json b/package.json
 --- a/package.json
 +++ b/package.json
-@@ -15,8 +15,8 @@
+@@ -13,8 +13,8 @@
        "browser": "./dist/index-browser.js",
        "react-native": "./dist/index-browser.js",
        "workflow": "./dist/index-browser.js",
