@@ -102,5 +102,8 @@
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.56.1",
     "vite": "8.1.5"
+  },
+  "patchedDependencies": {
+    "@vercel/oidc@3.2.0": "patches/@vercel%2Foidc@3.2.0.patch"
   }
 }

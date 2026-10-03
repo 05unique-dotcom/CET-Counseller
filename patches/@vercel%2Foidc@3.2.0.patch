@@ -1,0 +1,14 @@
+diff --git a/package.json b/package.json
+--- a/package.json
++++ b/package.json
+@@ -15,8 +15,8 @@
+       "browser": "./dist/index-browser.js",
+       "react-native": "./dist/index-browser.js",
+       "workflow": "./dist/index-browser.js",
+-      "import": "./dist/index.js",
+-      "require": "./dist/index.js"
++      "import": "./dist/index-browser.js",
++      "require": "./dist/index-browser.js"
+     }
+   },
+   "version": "3.2.0",
