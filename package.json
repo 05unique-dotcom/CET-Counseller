@@ -12,8 +12,7 @@
     "format": "prettier --write ."
   },
   "overrides": {
-    "rolldown": "1.2.1",
-    "@vercel/oidc": "file:./stubs/vercel-oidc"
+    "rolldown": "1.2.1"
   },
   "dependencies": {
     "@ai-sdk/openai": "^4.0.71",
