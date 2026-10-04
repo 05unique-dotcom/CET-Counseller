@@ -1,6 +1,12 @@
 import { Suspense, lazy, useEffect, useState } from "react";
 
-const StudioRoot = lazy(() => import("@/sanity/StudioRoot"));
+// The Studio is browser-only. Keeping the import behind import.meta.env.SSR lets the
+// server build drop it entirely — its modules break the live server if bundled there.
+const StudioRoot = lazy(() =>
+  import.meta.env.SSR
+    ? Promise.resolve({ default: () => null })
+    : import("@/sanity/StudioRoot"),
+);
 
 export function StudioPage() {
   const [mounted, setMounted] = useState(false);
