@@ -5,13 +5,15 @@ import {
   withLovableAiGatewayRunIdHeader,
 } from "@/lib/ai-gateway.server";
 import { buildKnowledgeContext } from "@/data/cet-knowledge";
+import { fetchSanityKnowledgeContext } from "@/lib/sanity-knowledge.server";
 import { createOpenAI } from "@ai-sdk/openai";
 import { createFileRoute } from "@tanstack/react-router";
 import { convertToModelMessages, streamText, type UIMessage } from "ai";
 
 type ChatRequestBody = { messages?: unknown };
 
-const systemPrompt = `You are "CET Counsellor", an expert admission guide for Maharashtra engineering aspirants (MHT-CET and JEE Main) going through the State CET Cell CAP process.
+function buildSystemPrompt(referenceContent: string, isOfficial: boolean) {
+  return `You are "CET Counsellor", an expert admission guide for Maharashtra engineering aspirants (MHT-CET and JEE Main) going through the State CET Cell CAP process.
 
 How to answer:
 - Be warm, calm and practical. Many students and parents are anxious and are not fluent in technical jargon.
@@ -23,8 +25,9 @@ How to answer:
 - Never invent a cutoff you do not have. If a college or year is outside the reference data, say the number is indicative and tell them to check the official CET Cell cutoff PDF.
 - Close sensitive advice with a brief reminder that official CET Cell notifications are the final authority.
 
-Reference content (indicative sample data, may not be the latest year):
-${buildKnowledgeContext()}`;
+Reference content (${isOfficial ? "official Maharashtra CET Cell 2026-27 data from the content store" : "indicative sample data, may not be the latest year"}):
+${referenceContent}`;
+}
 
 export const Route = createFileRoute("/api/chat")({
   server: {
