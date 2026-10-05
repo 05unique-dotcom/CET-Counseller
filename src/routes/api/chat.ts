@@ -52,6 +52,11 @@ export const Route = createFileRoute("/api/chat")({
           fetch: runIdFetch.fetch,
         });
 
+        const sanityContext = await fetchSanityKnowledgeContext();
+        const systemPrompt = sanityContext
+          ? buildSystemPrompt(sanityContext, true)
+          : buildSystemPrompt(buildKnowledgeContext(), false);
+
         const result = streamText({
           model: lovable.responses("openai/gpt-6-astra"),
           system: systemPrompt,
