@@ -97,7 +97,7 @@ function Home() {
       <section className="mx-auto grid w-full max-w-5xl gap-4 px-5 pb-16 sm:grid-cols-3">
         <Stat icon={<GraduationCap className="size-4" />} value="201 colleges" label="Pune & Mumbai region colleges, 555+ branches (CS, IT, AI & DS and more)" />
         <Stat icon={<ListChecks className="size-4" />} value="3 CAP rounds" label="Official 2026-27 closing percentiles for CAP Rounds 1, 2 and 3" />
-        <Stat icon={<ShieldCheck className="size-4" />} value="10 categories" label="OPEN, OBC, SC, ST, VJNT, EWS, TFWS, PWD, Defence & Ex-servicemen rules" />
+        <Stat icon={<ShieldCheck className="size-4" />} value="13 categories" label="OPEN, OBC, SC, ST, VJNT, SBC, EWS, TFWS, PWD, Defence, Ex-servicemen, Orphan & Minority rules" />
       </section>
 
       <footer className="border-t border-border py-6 text-center text-xs text-muted-foreground">
