@@ -72,7 +72,7 @@ function Home() {
           Your admission doubts, answered in plain language.
         </h1>
         <p className="mx-auto mt-4 max-w-xl text-base text-muted-foreground">
-          Cutoffs, CAP rounds and category rules for OPEN, OBC, SC, ST, VJNT, EWS, TFWS, PWD,
+          Cutoffs, CAP rounds and category rules for OPEN, OBC, SC, ST, VJNT, EWS, TFWS, PWD, NT1, NT2, NT3,
           Defence and Ex-servicemen seats — ask in English, Marathi or Hinglish.
         </p>
 
