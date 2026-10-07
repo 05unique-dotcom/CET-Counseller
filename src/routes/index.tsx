@@ -1,6 +1,5 @@
 import logo from "@/assets/cet-logo.png";
 import { Button } from "@/components/ui/button";
-import { capRounds, colleges, seatCategories } from "@/data/cet-knowledge";
 import { createThread, useThreads } from "@/lib/threads";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ArrowRight, GraduationCap, ListChecks, ShieldCheck } from "lucide-react";
@@ -96,9 +95,9 @@ function Home() {
       </section>
 
       <section className="mx-auto grid w-full max-w-5xl gap-4 px-5 pb-16 sm:grid-cols-3">
-        <Stat icon={<ListChecks className="size-4" />} value={`${capRounds.length} stages`} label="CAP process explained step by step" />
-        <Stat icon={<GraduationCap className="size-4" />} value={`${colleges.length} colleges`} label="Branch-wise closing percentiles in the knowledge base" />
-        <Stat icon={<ShieldCheck className="size-4" />} value={`${seatCategories.length} categories`} label="Reservation rules and required certificates" />
+        <Stat icon={<GraduationCap className="size-4" />} value="201 colleges" label="Pune & Mumbai region colleges, 555+ branches (CS, IT, AI & DS and more)" />
+        <Stat icon={<ListChecks className="size-4" />} value="3 CAP rounds" label="Official 2026-27 closing percentiles for CAP Rounds 1, 2 and 3" />
+        <Stat icon={<ShieldCheck className="size-4" />} value="10 categories" label="OPEN, OBC, SC, ST, VJNT, EWS, TFWS, PWD, Defence & Ex-servicemen rules" />
       </section>
 
       <footer className="border-t border-border py-6 text-center text-xs text-muted-foreground">
