@@ -33,17 +33,16 @@ export const Route = createFileRoute("/api/chat")({
         }
 
         const apiKey = process.env["GROQ_API_KEY"];
-if (!apiKey) {
-  return new Response("The counsellor is not configured yet (missing Groq key).", {
-    status: 500,
-  });
-}
+        if (!apiKey) {
+          return new Response("The counsellor is not configured yet (missing Groq key).", {
+            status: 500,
+          });
+        }
 
-const groq = createOpenAI({
-  baseURL: "https://api.groq.com/openai/v1",
-  apiKey,
-});
-
+        const groq = createOpenAI({
+          baseURL: "https://api.groq.com/openai/v1",
+          apiKey,
+        });
 
         const userTexts = (messages as UIMessage[])
           .filter((m) => m.role === "user")
