@@ -55,7 +55,7 @@ export const Route = createFileRoute("/api/chat")({
           : buildSystemPrompt(buildKnowledgeContext(), false);
 
         const result = streamText({
-          model: groq("llama3-8b-8192"),
+          model: groq("llama-3.1-8b-instant"),
           system: systemPrompt,
           messages: await convertToModelMessages(messages as UIMessage[]),
           maxOutputTokens: 2000,
