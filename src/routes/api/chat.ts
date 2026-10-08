@@ -52,7 +52,17 @@ export const Route = createFileRoute("/api/chat")({
           fetch: runIdFetch.fetch,
         });
 
-        const sanityContext = await fetchSanityKnowledgeContext();
+        // Use the latest user message (plus the previous one for follow-ups) to pick relevant colleges.
+        const userTexts = (messages as UIMessage[])
+          .filter((m) => m.role === "user")
+          .slice(-2)
+          .map((m) =>
+            (m.parts ?? [])
+              .map((p) => (p.type === "text" ? p.text : ""))
+              .join(" "),
+          )
+          .join(" ");
+        const sanityContext = await fetchSanityKnowledgeContext(userTexts);
         const systemPrompt = sanityContext
           ? buildSystemPrompt(sanityContext, true)
           : buildSystemPrompt(buildKnowledgeContext(), false);
