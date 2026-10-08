@@ -1,6 +1,6 @@
 import { buildKnowledgeContext } from "@/data/cet-knowledge";
 import { fetchSanityKnowledgeContext } from "@/lib/sanity-knowledge.server";
-import { createAnthropic } from "@ai-sdk/anthropic";
+import { createOpenAI } from "@ai-sdk/openai";
 import { createFileRoute } from "@tanstack/react-router";
 import { convertToModelMessages, streamText, type UIMessage } from "ai";
 
@@ -32,14 +32,18 @@ export const Route = createFileRoute("/api/chat")({
           return new Response("Messages are required", { status: 400 });
         }
 
-        const apiKey = process.env["ANTHROPIC_API_KEY"];
-        if (!apiKey) {
-          return new Response("The counsellor is not configured yet (missing Anthropic key).", {
-            status: 500,
-          });
-        }
+        const apiKey = process.env["GROQ_API_KEY"];
+if (!apiKey) {
+  return new Response("The counsellor is not configured yet (missing Groq key).", {
+    status: 500,
+  });
+}
 
-        const anthropic = createAnthropic({ apiKey });
+const groq = createOpenAI({
+  baseURL: "https://api.groq.com/openai/v1",
+  apiKey,
+});
+
 
         const userTexts = (messages as UIMessage[])
           .filter((m) => m.role === "user")
@@ -52,7 +56,7 @@ export const Route = createFileRoute("/api/chat")({
           : buildSystemPrompt(buildKnowledgeContext(), false);
 
         const result = streamText({
-          model: anthropic("claude-haiku-4-5"),
+          model: groq("llama-3.3-70b-versatile"),
           system: systemPrompt,
           messages: await convertToModelMessages(messages as UIMessage[]),
           maxOutputTokens: 2000,
