@@ -55,7 +55,7 @@ const BRANCH_ALIASES: Array<[RegExp, string[]]> = [
 ];
 
 const STOPWORDS = new Set(
-  "the and for with what which college colleges cutoff cutoffs round cap can get admission engineering institute of technology in my is a an to i me pune mumbai percentile percent marks category branch seat seats please tell about best list".split(
+  "the and for with what which college colleges cutoff cutoffs round cap can get admission engineering institute of technology in my is a an to i me pune mumbai percentile percent marks category branch seat seats please tell about best list documents document required rules rule process procedure how when date dates explain freeze betterment".split(
     " ",
   ),
 );
