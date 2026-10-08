@@ -161,7 +161,7 @@ export async function fetchSanityKnowledgeContext(question = ""): Promise<string
         .sort((x, y) => x.d - y.d)
         .slice(0, MAX_COLLEGES)
         .map((x) => x.c);
-    } else if (a.branches.length || a.cities.length || a.categories.length) {
+    } else if (a.branches.length || a.cities.length) {
       const top = (c: SanityCollege) =>
         Math.max(0, ...(c.branches ?? []).flatMap((b) => (b.cutoffs ?? []).map((x) => x.round1 ?? 0)));
       selected = [...pool].sort((x, y) => top(y) - top(x)).slice(0, MAX_COLLEGES);
