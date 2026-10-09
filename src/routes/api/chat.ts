@@ -28,7 +28,7 @@ export const Route = createFileRoute("/api/chat")({
           return new Response("Messages are required", { status: 400 });
         }
 
-        const apiKey = process.env["GROQ_API_KEY"];
+        const apiKey = process.env["VITE_GROQ_API_KEY"];
         if (!apiKey) {
           return new Response("The counsellor is not configured yet (missing Groq key).", {
             status: 500,
