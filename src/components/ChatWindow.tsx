@@ -46,10 +46,11 @@ export function ChatWindow({
     onError: (error) => toast.error(error.message || "Could not reach the counsellor."),
   });
 
-  const isLoading = status === "submitted" || status === "streaming";
+    const isLoading = status === "submitted" || status === "streaming";
 
+  // Only sync to localStorage when streaming has finished (not on every token)
   useEffect(() => {
-    if (messages.length === 0) return;
+    if (messages.length === 0 || isLoading) return;
     const existing = getThread(threadId);
     upsertThread({
       id: threadId,
@@ -57,22 +58,26 @@ export function ChatWindow({
       updatedAt: Date.now(),
       messages,
     });
-  }, [messages, threadId]);
+  }, [messages, threadId, isLoading]);
 
+  // Avoid aggressive auto-focus on mobile touch screens
   useEffect(() => {
-    if (!isLoading) textareaRef.current?.focus();
+    if (!isLoading && typeof window !== "undefined" && window.innerWidth >= 768) {
+      textareaRef.current?.focus();
+    }
   }, [isLoading, threadId]);
 
   const sentInitial = useRef(false);
   useEffect(() => {
     const question = initialQuestion?.trim();
     if (!question || sentInitial.current || messages.length > 0) return;
+    sentInitial.current = true;
     const timer = window.setTimeout(() => {
-      sentInitial.current = true;
       void sendMessage({ text: question });
     }, 60);
     return () => window.clearTimeout(timer);
   }, [initialQuestion, messages.length, sendMessage]);
+
 
   const send = (text: string) => {
     const value = text.trim();
