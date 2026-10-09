@@ -1,6 +1,6 @@
 /**
  * Fetches only the admission content relevant to the student's question
- * (matching colleges/branches/categories) from Sanity, keeping the AI prompt small.
+ * (matching colleges/branches/categories) from Sanity, keeping the AI prompt small (~500 tokens).
  *
  * Returns null when Sanity is unreachable or empty so the caller can fall back
  * to the built-in sample data.
@@ -31,7 +31,7 @@ type SanityCategory = {
   reservationRules?: string[] | string;
 };
 
-const MAX_COLLEGES = 12;
+const MAX_COLLEGES = 20;
 
 const CATEGORY_ALIASES: Record<string, string[]> = {
   OPEN: ["open", "general"],
@@ -115,7 +115,7 @@ export async function fetchSanityKnowledgeContext(question = ""): Promise<string
 
     if (!colleges.length && !capRounds.length && !categories.length) return null;
 
-    // Narrow colleges by city, branch, name match, percentile.
+    // Narrow colleges by city, branch, name match, percentile
     let pool = colleges.filter(
       (c) => !a.cities.length || a.cities.some((x) => (c.location ?? "").toLowerCase().includes(x)),
     );
@@ -144,7 +144,6 @@ export async function fetchSanityKnowledgeContext(question = ""): Promise<string
     if (named.length) {
       selected = named.slice(0, MAX_COLLEGES);
     } else if (a.percentile != null) {
-      // Pick colleges whose closing percentile sits near the student's score (ambitious → safe).
       const p = a.percentile;
       const closest = (c: SanityCollege) => {
         let best = Infinity;
@@ -171,54 +170,43 @@ export async function fetchSanityKnowledgeContext(question = ""): Promise<string
 
     const parts: string[] = [];
     if (selected.length) {
-      parts.push(
-        `## Matching colleges and cutoffs (official CET Cell 2026-27; ${selected.length} of ${colleges.length} colleges shown — filtered to this question)`,
-      );
+      parts.push(`## Cutoffs (R1/R2/R3 %ile; '-' = no seat):`);
       for (const c of selected) {
-        parts.push(`\n### ${c.name}${c.shortName ? ` (${c.shortName})` : ""} — ${c.location ?? ""}`);
-        for (const b of c.branches ?? []) {
+        const branchParts = (c.branches ?? []).map((b) => {
           const cuts = (b.cutoffs ?? [])
-            .map((x) => {
-              const r = [x.round1, x.round2, x.round3].map((v) => (v == null ? "-" : v)).join("/");
-              return `${x.category} ${r}`;
-            })
+            .map((x) => `${x.category} ${[x.round1, x.round2, x.round3].map((v) => (v == null ? "-" : v)).join("/")}`)
             .join("; ");
-          parts.push(`- ${b.name}: ${cuts}`);
-        }
+          return `${b.name}: [${cuts}]`;
+        });
+        parts.push(`- ${c.shortName ? `${c.shortName} (${c.name})` : c.name} [${c.location ?? ""}]: ${branchParts.join(" | ")}`);
       }
-      parts.push("(Format: CATEGORY R1/R2/R3 closing percentile; '-' = no closing that round.)");
-    } else if (colleges.length) {
-      parts.push(
-        `## Colleges\nThe content store has ${colleges.length} Pune & Mumbai colleges. None matched this question; ask the student for a college name, branch, percentile or category to look up cutoffs.`,
-      );
-    } else if (a.needsColleges) {
-      parts.push("## Colleges\nNo college matched this question in the content store.");
+    } else if (colleges.length && a.needsColleges) {
+      parts.push(`(No specific colleges matched; prompt student for college name, branch, percentile or category.)`);
     }
 
-    if (capRounds.length) {
-      parts.push("\n## CAP rounds");
+    // Attach CAP rounds only when the question touches rounds, schedules, or procedure
+    const isRoundQuery = /\b(cap|round|date|schedule|freeze|betterment|acceptance|admission process|deadline)\b/i.test(question);
+    if (capRounds.length && isRoundQuery) {
+      parts.push("\n## CAP Rounds:");
       for (const r of capRounds) {
         const dates = [r.startDate, r.endDate].filter(Boolean).join(" to ");
-        parts.push(`- ${r.title ?? r.name ?? `Round ${r.roundNumber}`}${dates ? ` (${dates})` : ""}: ${r.description ?? ""}`);
+        parts.push(`- ${r.title ?? `Round ${r.roundNumber}`}${dates ? ` (${dates})` : ""}: ${r.description ?? ""}`);
       }
     }
 
-    if (categories.length) {
-      parts.push("\n## Seat categories");
+    // Attach category docs only when asked about categories, documents, or certificates
+    const isDocQuery = /\b(doc|document|certificate|validity|ncl|non-creamy|creamy|reservation|eligib|proof)\b/i.test(question);
+    if (categories.length && (isDocQuery || a.categories.length > 0)) {
+      parts.push("\n## Category Documents & Rules:");
       const relevant = a.categories.length
         ? categories.filter((c) =>
             a.categories.some((k) => `${c.code ?? ""} ${c.name ?? ""}`.toUpperCase().includes(k)),
           )
-        : [];
-      for (const cat of categories) {
-        const full = relevant.includes(cat);
-        if (!full) {
-          parts.push(`- ${cat.name ?? cat.code}`);
-          continue;
-        }
-        parts.push(`- ${cat.name ?? cat.code}:`);
-        for (const d of asList(cat.requiredDocuments)) parts.push(`  - Document: ${d}`);
-        for (const r of asList(cat.reservationRules)) parts.push(`  - Rule: ${r}`);
+        : categories;
+      for (const cat of relevant) {
+        const docs = asList(cat.requiredDocuments).join(", ");
+        const rules = asList(cat.reservationRules).join("; ");
+        parts.push(`- ${cat.name ?? cat.code}: ${docs ? `Docs: ${docs}` : ""}${rules ? ` | Rules: ${rules}` : ""}`);
       }
     }
 
